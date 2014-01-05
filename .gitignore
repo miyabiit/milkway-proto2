@@ -1,5 +1,8 @@
 .DS_Store
 node_modules
+app/bower_components
 *.swp
+.tmp
+.sass-cache
 ._*
 
