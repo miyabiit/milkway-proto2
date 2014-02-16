@@ -1,15 +1,15 @@
 define([
 	'backbone',
-	'hbs!tmpl/item/causemap_tmpl'
+	'hbs!tmpl/item/causemap_tmpl',
+	'models/causemap'
 ],
-function( Backbone, CausemapTmpl  ) {
-    'use strict';
+function( Backbone, CausemapTmpl,Causemap) {
+	'use strict';
 
 	/* Return a ItemView class definition */
 	return Backbone.Marionette.ItemView.extend({
 
 		initialize: function() {
-			console.log("initialize a Causemap ItemView");
 		},
 		
 		template: CausemapTmpl,
@@ -21,20 +21,22 @@ function( Backbone, CausemapTmpl  ) {
 
 		/* on render callback */
 		onRender: function() {
-			var mapOptions = {
-				center: new google.maps.LatLng(35.6903, 139.7006),
-				zoom: 15,
-				mapTypeId: google.maps.MapTypeId.ROADMAP,
-			};
+			var cause = new Causemap();
+			var marker;
 
-			var map = new google.maps.Map(this.el, mapOptions);
-			this.ui.mapContainer.html(this.el);
-			console.log("render a Causemap ItemView");
+			var map = new google.maps.Map(this.el, cause.mapOptions);
+			//this.ui.mapContainer.html(this.el); //不要?
 
-			google.maps.event.addListener(map, "idle", function(){
-				map.setCenter(mapOptions.center);
-				google.maps.event.trigger(map, 'resize');
-			});
-		}
+			google.maps.event.addListener(map, 'click', clickMap);
+
+			function clickMap(event){
+				if(marker){marker.setMap(null)};
+				marker = new google.maps.Marker({
+					position: event.latLng,
+					draggable: true,
+					map: map
+				});
+			}
+		},
 	});
 });
